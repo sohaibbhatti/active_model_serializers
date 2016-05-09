@@ -14,6 +14,16 @@ module ActiveModel
           serializer_context_class = options.fetch(:serializer_context_class, ActiveModel::Serializer)
           serializer_class = options.fetch(:serializer) { serializer_context_class.serializer_for(resource) }
 
+          if options[:serializer_params] && options[:serializer_params][:hetrogeneous]
+            if resource.instance_of? FixedAsset
+              serializer_class = FixedAssetSerializer
+            elsif resource.instance_of? VolatileAsset
+              serializer_class = VolatileAssetSerializer
+            elsif resource.instance_of? StockAsset
+              serializer_class = StockAssetSerializer
+            end
+          end
+
           if serializer_class.nil?
             fail NoSerializerError, "No serializer found for resource: #{resource.inspect}"
           else
